@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Aplicação segura contra XSS e CSRF">
+    <title>Aplicação Segura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .success {
+            color: green;
+            margin: 15px 0;
+        }
+        .message-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulário Seguro</h1>
+    <p>Esta aplicação está protegida contra XSS e CSRF.</p>
+    
+    {% if success %}
+        <div class="success">{{ success }}</div>
+    {% endif %}
+    
+    <form method="POST" action="/">
+        <!-- Proteção CSRF (obrigatória quando usando Flask-WTF) -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="form-group">
+            <label for="username">Nome:</label>
+            <input type="text" id="username" name="username" 
+                   value="{{ username if username else '' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Mensagem:</label>
+            <textarea id="message" name="message" rows="4" required>{{ message if message else '' }}</textarea>
+        </div>
+        
+        <button type="submit">Enviar</button>
+    </form>
+    
+    {% if username and message %}
+    <div class="message-box">
+        <h3>Última mensagem enviada:</h3>
+        <p><strong>Usuário:</strong> {{ username }}</p>
+        <p><strong>Mensagem:</strong> {{ message }}</p>
+    </div>
+    {% endif %}
+    
+    <p><a href="/logout">Sair</a></p>
+</body>
+</html>
